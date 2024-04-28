@@ -1,0 +1,11 @@
+name: bakta_prokka_panaroo
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::bakta=1.8.2
+  - bioconda::prokka=1.14.6
+  - bioconda::panaroo
+  - bioconda::iqtree=2.1.4_beta
+ 

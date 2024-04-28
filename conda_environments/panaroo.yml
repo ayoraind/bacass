@@ -1,0 +1,8 @@
+name: panaroo
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconda::panaroo
+ 

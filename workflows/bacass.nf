@@ -18,6 +18,39 @@ if(! params.skip_kraken2){
 }
 
 /*
+========================================================================================
+    VALIDATE INPUTS
+========================================================================================
+*/
+
+def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
+
+// Validate input parameters
+WorkflowBacass.initialise(params, log)
+
+checkPathParamList = [ params.input ]
+for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+
+// Check mandatory parameters
+// if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input samplesheet not specified!' }
+// if (params.reference) { ch_reference = file(params.reference) } else { exit 1, 'Reference fasta file not specified!' }
+
+
+/*
+========================================================================================
+    CONFIG FILES
+========================================================================================
+*/
+
+// ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
+// ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
+
+// Don't overwrite global params.modules, create a copy instead and use that within the main script.
+// def modules = params.modules.clone()
+// def multiqc_options   = modules['multiqc']
+// multiqc_options.args += params.multiqc_title ? Utils.joinModuleArgs(["--title \"$params.multiqc_title\""]) : ''
+
+/*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,10 +102,13 @@ include { MULTIQC                               } from '../modules/nf-core/multi
 //
 include { FASTQ_TRIM_FASTP_FASTQC               } from '../subworkflows/nf-core/fastq_trim_fastp_fastqc/main'
 include { BAKTA_DBDOWNLOAD_RUN                  } from '../subworkflows/local/bakta_dbdownload_run'
-include { paramsSummaryMap                      } from 'plugin/nf-validation'
-include { paramsSummaryMultiqc                  } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { softwareVersionsToYAML                } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+// include { paramsSummaryMap                      } from 'plugin/nf-validation'
+include { MULTIQC                               } from '../modules/local/multiqc'               addParams( options: multiqc_options )
+// include { paramsSummaryMultiqc                  } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { GET_SOFTWARE_VERSIONS                 } from '../modules/local/get_software_versions' addParams( options: [publish_files : ['csv':'']] )
+// include { softwareVersionsToYAML                } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText                } from '../subworkflows/local/utils_nfcore_bacass_pipeline'
+include { INPUT_CHECK                           } from '../subworkflows/input_check'       addParams( options: [:] )
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -460,8 +496,10 @@ workflow BACASS {
     ch_multiqc_config                     = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
     ch_multiqc_custom_config              = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
     ch_multiqc_logo                       = params.multiqc_logo ? Channel.fromPath(params.multiqc_logo, checkIfExists: true) : Channel.empty()
-    summary_params                        = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary                   = Channel.value(paramsSummaryMultiqc(summary_params))
+ //   summary_params                        = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    summary_params			  = WorkflowBacass.paramsSummaryMultiqc(workflow, summary_params)
+  //  ch_workflow_summary                   = Channel.value(paramsSummaryMultiqc(summary_params))
+    ch_workflow_summary			  = Channel.value(workflow_summary)
     ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
 
     ch_methods_description                = Channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))

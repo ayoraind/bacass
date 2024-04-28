@@ -8,9 +8,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { UTILS_NFVALIDATION_PLUGIN } from '../../nf-core/utils_nfvalidation_plugin'
-include { paramsSummaryMap          } from 'plugin/nf-validation'
-include { fromSamplesheet           } from 'plugin/nf-validation'
+// include { UTILS_NFVALIDATION_PLUGIN } from '../../nf-core/utils_nfvalidation_plugin'
+// include { paramsSummaryMap          } from 'plugin/nf-validation'
+// include { fromSamplesheet           } from 'plugin/nf-validation'
 include { UTILS_NEXTFLOW_PIPELINE   } from '../../nf-core/utils_nextflow_pipeline'
 include { completionEmail           } from '../../nf-core/utils_nfcore_pipeline'
 include { completionSummary         } from '../../nf-core/utils_nfcore_pipeline'
@@ -57,14 +57,14 @@ workflow PIPELINE_INITIALISATION {
     pre_help_text = nfCoreLogo(monochrome_logs)
     post_help_text = '\n' + workflowCitation() + '\n' + dashedLine(monochrome_logs)
     def String workflow_command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input samplesheet.csv --outdir <OUTDIR>"
-    UTILS_NFVALIDATION_PLUGIN (
-        help,
-        workflow_command,
-        pre_help_text,
-        post_help_text,
-        validate_params,
-        "nextflow_schema.json"
-    )
+  //  UTILS_NFVALIDATION_PLUGIN (
+    //    help,
+     //   workflow_command,
+      //  pre_help_text,
+       // post_help_text,
+       // validate_params,
+       // "nextflow_schema.json"
+   // )
 
     //
     // Check config provided to the pipeline
@@ -111,6 +111,8 @@ workflow PIPELINE_INITIALISATION {
 ========================================================================================
 */
 
+// def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
+
 workflow PIPELINE_COMPLETION {
 
     take:
@@ -124,7 +126,8 @@ workflow PIPELINE_COMPLETION {
 
     main:
 
-    summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+ //   summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+ //    summary_params = NfcoreSchema.paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
 
     //
     // Completion email and summary
