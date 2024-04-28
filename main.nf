@@ -25,7 +25,7 @@ pipeline_start_message(version, final_params)
 
 
 // include processes
-include { FASTQC as FASTQC_RAW; FASTP; FASTQC as FASTQC_TRIM; NANOPLOT; PYCOQC; PORECHOP_PORECHOP; UNICYCLER; CANU; MINIMAP2_ALIGN as MINIMAP2_POLISH; MINIMAP2_ALIGN as MINIMAP2_CONSENSUS; MINIASM; RACON; DRAGONFLYE; MEDAKA; KRAKEN2_DB_PREPARATION; KRAKEN2; KRAKEN2_LONG; QUAST; CUSTOM_DUMPSOFTWAREVERSIONS } from './modules/processes.nf' addParams(final_params)
+include { FASTQC as FASTQC_RAW; FASTP; FASTQC as FASTQC_TRIM; NANOPLOT; PYCOQC; PORECHOP_PORECHOP; UNICYCLER; CANU; MINIMAP2_ALIGN as MINIMAP2_POLISH; MINIMAP2_ALIGN as MINIMAP2_CONSENSUS; MINIASM; RACON; DRAGONFLYE; MEDAKA; KRAKEN2_DB_PREPARATION; KRAKEN2; KRAKEN2_LONG; QUAST; CUSTOM_DUMPSOFTWAREVERSIONS; MULTIQC } from './modules/processes.nf' addParams(final_params)
 
 //
 // SUBWORKFLOWS: Consisting of a mix of local and nf-core/modules
@@ -430,6 +430,37 @@ workflow {
     //
     CUSTOM_DUMPSOFTWAREVERSIONS (
                                 ch_versions.unique().collectFile(name: 'collated_versions.yml')
+    )
+    
+    
+    //
+    // MODULE: MultiQC
+    //
+    ch_multiqc_config                     = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
+    ch_multiqc_custom_config              = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
+    ch_multiqc_logo                       = params.multiqc_logo ? Channel.fromPath(params.multiqc_logo, checkIfExists: true) : Channel.empty()
+   // summary_params                        = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+   // ch_workflow_summary                   = Channel.value(paramsSummaryMultiqc(summary_params))
+  //  ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
+
+  //  ch_methods_description                = Channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
+    ch_multiqc_files                      = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml_ch)
+    ch_multiqc_files                      = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.versions_ch)
+   // ch_multiqc_files                      = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: false))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_fastqc_raw_zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_fastqc_trim_zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_trim_json.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_kraken_short_multiqc.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_kraken_long_multiqc.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_quast_multiqc.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_nanoplot_txt_multiqc.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files                      = ch_multiqc_files.mix(ch_porechop_log_multiqc.collect{it[1]}.ifEmpty([]))
+    
+    MULTIQC (
+        ch_multiqc_files.collect(),
+        ch_multiqc_config,
+        ch_multiqc_custom_config.collect().ifEmpty([]),
+        ch_multiqc_logo.collect().ifEmpty([])
     )
 
 
