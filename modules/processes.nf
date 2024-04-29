@@ -1,6 +1,7 @@
 process FASTQC {
     tag "$meta"
     label 'process_medium'
+    cache 'lenient'
     
     conda "${projectDir}/conda_environments/fastp.yml"
 
@@ -54,6 +55,7 @@ process FASTQC {
 process FASTP {
     tag "$meta"
     label 'process_medium'
+    cache 'lenient'
     
     conda "${projectDir}/conda_environments/fastp.yml"
     
@@ -170,7 +172,8 @@ process FASTP {
 process NANOPLOT {
     tag "$meta"
     label 'process_low'
-
+    cache 'lenient'
+    
     conda "${projectDir}/conda_environments/nanoplot.yml"
 
     input:
@@ -228,7 +231,8 @@ process NANOPLOT {
 
 process PYCOQC {
     label 'process_medium'
-
+    cache 'lenient'
+    
     conda "${projectDir}/conda_environments/pycoqc.yml"
     
     input:
@@ -268,7 +272,8 @@ process PYCOQC {
 process PORECHOP_PORECHOP {
     tag "$meta"
     label 'process_medium'
-
+    cache 'lenient'
+    
     conda "${projectDir}/conda_environments/porechop.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/porechop:0.2.4--py39h7cff6ad_2' :
@@ -317,6 +322,7 @@ process PORECHOP_PORECHOP {
 process UNICYCLER {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/unicycler.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -368,6 +374,7 @@ process UNICYCLER {
 process CANU {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/canu.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -419,6 +426,7 @@ process CANU {
 process MINIMAP2_ALIGN {
     tag "$meta"
     label 'process_medium'
+    cache 'lenient'
 
     // Note: the versions here need to match the versions used in the mulled container below and minimap2/index
     conda "${projectDir}/conda_environments/minimap2_align.yml"
@@ -482,6 +490,7 @@ process MINIMAP2_ALIGN {
 process MINIASM {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/miniasm.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -524,6 +533,7 @@ process MINIASM {
 process DRAGONFLYE {
     tag "$meta"
     label 'process_medium'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/dragonflye.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -570,6 +580,7 @@ process DRAGONFLYE {
 process RACON {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/racon.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -610,6 +621,7 @@ process RACON {
 process SAMTOOLS_SORT {
     tag "$meta"
     label 'process_medium'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/samtools_sort.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -675,6 +687,7 @@ process SAMTOOLS_SORT {
 process SAMTOOLS_INDEX {
     tag "$meta"
     label 'process_low'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/samtools_index.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -724,6 +737,7 @@ process SAMTOOLS_INDEX {
 process KRAKEN2_DB_PREPARATION {
     tag "${db.simpleName}"
     label 'process_low'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/kraken2_db_preparation.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -757,6 +771,7 @@ process KRAKEN2_DB_PREPARATION {
 process KRAKEN2 {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/kraken2.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -844,6 +859,7 @@ process KRAKEN2 {
 process KRAKEN2_LONG {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/kraken2.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -926,6 +942,7 @@ process KRAKEN2_LONG {
 process QUAST {
     tag "$meta"
     label 'process_medium'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/quast.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -1063,6 +1080,7 @@ process QUAST {
 
 process MULTIQC {
     label 'process_single'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/multiqc.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -1121,6 +1139,7 @@ process MULTIQC {
 process NANOPOLISH {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/nanopolish.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -1166,6 +1185,7 @@ process NANOPOLISH {
 process MEDAKA {
     tag "$meta"
     label 'process_high'
+    cache 'lenient'
 
     conda "${projectDir}/conda_environments/medaka.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
