@@ -119,11 +119,13 @@ workflow {
 	//	ch_fast5.view()
 		
               // QC
+	      ch_fastqc_raw_html = Channel.empty()
+              ch_fastqc_raw_zip  = Channel.empty()
+	      ch_fastqc_trim_zip = Channel.empty()
+	      ch_trim_json = Channel.empty()
 	      
 	      if (final_params.assembly_type != 'long') {
 	      
-	      ch_fastqc_raw_html = Channel.empty()
-              ch_fastqc_raw_zip  = Channel.empty()
 	      
 	      FASTQC_RAW(ch_shortreads)
 	      
